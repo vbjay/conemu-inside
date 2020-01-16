@@ -31,7 +31,4 @@
     <Compile Update="Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
   </ItemGroup>
 
-  <!-- Create a dummy Test target -->
-  <Target Name="Test" />
-
 </Project>
