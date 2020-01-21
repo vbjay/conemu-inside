@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Xml;
-
+using ConEmuWinForms;
 using JetBrains.Annotations;
 
 namespace ConEmu.WinForms
