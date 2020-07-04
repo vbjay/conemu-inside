@@ -110,10 +110,16 @@ namespace ConEmu.WinForms
 		/// </remarks>
 		/// <returns>Returns the newly-started session, as in <see cref="RunningSession" />.</returns>
 		[NotNull]
-		public ConEmuSession Start([NotNull] ConEmuStartInfo startinfo, [NotNull] JoinableTaskFactory joinableTaskFactory)
+		public ConEmuSession Start([NotNull] ConEmuStartInfo startinfo, [NotNull] JoinableTaskFactory joinableTaskFactory,
+			[NotNull] string conEmuStyle, string conEmuFontSize)
 		{
 			if(startinfo == null)
 				throw new ArgumentNullException(nameof(startinfo));
+
+
+			SetConsoleFontSize();
+
+			SetConsoleStyle();
 
 			// Close prev session if there is one
 			_running?.CloseConsoleEmulator();
@@ -146,6 +152,34 @@ namespace ConEmu.WinForms
 			}).Forget();
 
 			return session;
+
+			void SetConsoleFontSize()
+			{
+				var startInfoBaseConfiguration = startinfo.BaseConfiguration;
+				if (!string.IsNullOrWhiteSpace(conEmuFontSize))
+				{
+					if (int.TryParse(conEmuFontSize, out var fontSize))
+					{
+						var nodeFontSize =
+							startInfoBaseConfiguration.SelectSingleNode("/key/key/key/value[@name='FontSize']");
+
+						if (nodeFontSize?.Attributes != null)
+						{
+							nodeFontSize.Attributes["data"].Value = fontSize.ToString("X8");
+						}
+					}
+				}
+
+				startinfo.BaseConfiguration = startInfoBaseConfiguration;
+			}
+
+			void SetConsoleStyle()
+			{
+				if (conEmuStyle != "Default")
+				{
+					startinfo.ConsoleProcessExtraArgs = " -new_console:P:\"" + conEmuStyle + "\"";
+				}
+			}
 		}
 
 		[SuppressMessage("ReSharper", "UnusedMember.Local")]
